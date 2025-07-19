@@ -97,6 +97,7 @@
             border-radius: 10px;
             border: 1px solid #e9ecef;
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .form-group:hover {
@@ -360,6 +361,85 @@
             font-size: 0.9rem;
         }
 
+        .bmi-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .bmi-btn:hover {
+            background: #764ba2;
+        }
+
+        .bmi-dialog {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        .bmi-dialog.active {
+            display: block;
+        }
+
+        .bmi-dialog h3 {
+            margin-bottom: 15px;
+            color: #495057;
+        }
+
+        .bmi-dialog .form-group {
+            margin-bottom: 15px;
+            position: relative;
+            background: none;
+            border: none;
+            box-shadow: none;
+        }
+
+        .bmi-dialog .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+        }
+
+        .bmi-dialog .calc-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .bmi-dialog .calc-btn:hover {
+            background: #764ba2;
+        }
+
+        .bmi-dialog .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #495057;
+        }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -394,6 +474,15 @@
             .nav-btn {
                 width: 100%;
                 max-width: 200px;
+            }
+
+            .bmi-btn {
+                position: relative;
+                right: 0;
+                top: 0;
+                transform: none;
+                width: 100%;
+                margin-top: 10px;
             }
         }
 
@@ -496,6 +585,7 @@
                         <div class="form-group">
                             <label for="BMI">Body Mass Index (BMI)</label>
                             <input type="number" name="BMI" id="BMI" step="0.1" min="10" max="60" placeholder="e.g., 25.3" required>
+                            <button type="button" class="bmi-btn" onclick="openBmiDialog()">Calculate BMI</button>
                         </div>
 
                         <div class="form-group">
@@ -637,6 +727,21 @@
 
                     <button type="submit" class="submit-btn">Predict Heart Disease Risk</button>
                 </form>
+
+                <!-- BMI Calculator Dialog -->
+                <div id="bmi-dialog" class="bmi-dialog">
+                    <button class="close-btn" onclick="closeBmiDialog()">×</button>
+                    <h3>Calculate Your BMI</h3>
+                    <div class="form-group">
+                        <label for="height">Height (cm)</label>
+                        <input type="number" id="height" step="0.1" min="50" max="250" placeholder="e.g., 170" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="weight">Weight (kg)</label>
+                        <input type="number" id="weight" step="0.1" min="20" max="300" placeholder="e.g., 70" required>
+                    </div>
+                    <button type="button" class="calc-btn" onclick="calculateBmi()">Calculate</button>
+                </div>
             </div>
 
             <!-- How to Fill Guide Page -->
@@ -672,7 +777,7 @@
                             </div>
                             <div class="guide-item">
                                 <h4>BMI Calculation</h4>
-                                <p>BMI = weight (kg) ÷ height (m)². Or use: weight (lbs) ÷ height (inches)² × 703. Many online calculators are available.</p>
+                                <p>Use the 'Calculate BMI' button to compute your BMI using your height and weight. Alternatively, enter a known value.</p>
                             </div>
                             <div class="guide-item">
                                 <h4>Diabetes Status</h4>
@@ -763,7 +868,7 @@
                         </div>
                         <div class="info-item">
                             <h3>Body Mass Index (BMI)</h3>
-                            <p>A measure of body fat based on height and weight. Normal BMI: 18.5-24.9, Overweight: 25-29.9, Obese: 30+</p>
+                            <p>A measure of body fat based on height and weight. Normal BMI: 18.5-24.9, Overweight: 25-29.9, Obese: 30+. Use the 'Calculate BMI' button if needed.</p>
                         </div>
                         <div class="info-item">
                             <h3>Smoking Status</h3>
@@ -896,6 +1001,32 @@
                 behavior: 'smooth',
                 block: 'start'
             });
+        }
+
+        // BMI Calculator Functions
+        function openBmiDialog() {
+            const dialog = document.getElementById('bmi-dialog');
+            dialog.classList.add('active');
+        }
+
+        function closeBmiDialog() {
+            const dialog = document.getElementById('bmi-dialog');
+            dialog.classList.remove('active');
+        }
+
+        function calculateBmi() {
+            const height = parseFloat(document.getElementById('height').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+
+            if (height && weight && height > 0 && weight > 0) {
+                // BMI = weight (kg) / (height (m) * height (m))
+                const heightInMeters = height / 100;
+                const bmi = weight / (heightInMeters * heightInMeters);
+                document.getElementById('BMI').value = bmi.toFixed(1);
+                closeBmiDialog();
+            } else {
+                alert('Please enter valid height and weight values.');
+            }
         }
 
         // Check if prediction exists and show result automatically
