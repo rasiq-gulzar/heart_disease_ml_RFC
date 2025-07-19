@@ -352,6 +352,14 @@
             margin: 0;
         }
 
+        footer {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -379,7 +387,7 @@
             
             .nav-buttons {
                 flex-direction: column;
-                align-items: center; /* Center vertically on small screens */
+                align-items: center;
                 gap: 10px;
             }
             
@@ -413,6 +421,8 @@
         <div class="content">
             <!-- Result Section - Hidden by default -->
             <div id="result-section" class="result-section">
+                <!-- Hidden element to hold Flask prediction -->
+                <div id="prediction-result" style="display: none;">{{ prediction }}</div>
                 <!-- High Risk Card -->
                 <div id="high-risk-card" class="result-card high-risk" style="display: none;">
                     <div class="result-icon">⚠️</div>
@@ -821,6 +831,10 @@
         </div>
     </div>
 
+    <footer>
+        <p>© 2025 Rasiq Gulzar | <a href="https://rasiq-gulzar.github.io/resume-myportfolio.io.in/" target="_blank">Portfolio</a></p>
+    </footer>
+
     <script>
         // Navigation functionality
         function showPage(pageId) {
@@ -856,8 +870,8 @@
             resultSection.classList.add('show');
             
             // Get prediction from Flask template and clean it
-            const predictionElement = document.createElement('span');
-            let prediction = predictionElement.textContent.trim();
+            const predictionElement = document.getElementById('prediction-result');
+            let prediction = predictionElement ? predictionElement.textContent.trim() : '';
             
             // Extract the number from patterns like "[0]" or "[1]"
             const predictionValue = prediction.replace(/[\[\]]/g, ''); // Remove brackets
